@@ -1,0 +1,429 @@
+> rm(list=ls()) 
+> library(ROCR); library(readr); library(dplyr); library(lme4); 
+> library(mosaic) 
+Loading required package: car
+Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
+  there is no package called ‘quantreg’
+Error: package ‘car’ could not be loaded
+> library(randomForest)
+> library(glmnet)
+> df.1314 <- read_csv("~/Downloads/KOBE 2013_14 Updated Version.csv")
+|================================================================================| 100%   95 MB
+> df.1415 <- read_csv("~/Downloads/KOBE 2014_15 Updated Version.csv")
+Warning: 51333 parsing failures.
+ row          col   expected    actual
+3683 DRAFT_YEAR   an integer Undrafted
+3683 DRAFT_ROUND  an integer Undrafted
+3683 DRAFT_NUMBER an integer Undrafted
+3684 DRAFT_YEAR   an integer Undrafted
+3684 DRAFT_ROUND  an integer Undrafted
+.... ............ .......... .........
+.See problems(...) for more details.
+> 
+> 
+> 
+> df1314 <- select(df.1314, GAME_ID, MATCHUP, PLAYER_NAME, SHOT_NUMBER, PERIOD, LOCATION, GAME_CLOCK, SHOT_CLOCK, DRIBBLES, TOUCH_TIME, 
++                   SHOT_DIST, PTS_TYPE, SHOT_RESULT, CLOSE_DEF_DIST, FGM, PTS, AGE, 
++                   Team.Shooter, shot.clock, shot.dist, def.type, Dribble.type, dribble.num, 
++                   MINUTES_REMAINING, SECONDS_REMAINING, HEIGHT_DIFF, defdist)
+> 
+> df1415 <- select(df.1415, GAME_ID, MATCHUP, PLAYER_NAME, SHOT_NUMBER, PERIOD, LOCATION, GAME_CLOCK, SHOT_CLOCK, DRIBBLES, TOUCH_TIME, 
++                   SHOT_DIST, PTS_TYPE, SHOT_RESULT, CLOSE_DEF_DIST, FGM, PTS, AGE, 
++                   Team.Shooter, shot.clock, shot.dist, def.type, Dribble.type, dribble.num, 
++                   MINUTES_REMAINING, SECONDS_REMAINING, HEIGHT_DIFF, defdist)
+> 
+> df.all <- rbind(df1314, df1415)
+> df.all <- na.omit(df.all)
+> df.all <- df.all %>%
++   mutate(age.cent = AGE-mean(AGE), 
++          heightdiff.cent = HEIGHT_DIFF - mean(HEIGHT_DIFF),
++          distance.cent = SHOT_DIST - mean(SHOT_DIST), 
++          shot.clock.late = SHOT_CLOCK < 4, 
++          shot.clock.early = SHOT_CLOCK > 22)
+> 
+> ##Save data set with all shots for later work
+> df.games <- df.all
+> 
+> df.all %>% 
++   group_by(PTS_TYPE, LOCATION) %>%
++   summarise(mean.shot = mean(FGM))
+Source: local data frame [4 x 3]
+Groups: PTS_TYPE [?]
+
+  PTS_TYPE LOCATION mean.shot
+     (int)    (chr)     (dbl)
+1        2        A 0.4818728
+2        2        H 0.4952306
+3        3        A 0.3610842
+4        3        H 0.3672980
+> 
+> table(df.all$def.type)
+
+      Open      Tight Very Tight  Wide Open 
+    106741     136817      70380      70031 
+> table(df.all$Dribble.type)
+
+Catch and Shoot     Off dribble 
+         194108          189861 
+> 
+> ## Only players with at least 25 shots 
+> n.players <- df.all %>% group_by(PLAYER_NAME) %>% summarise(n.shots = n()) %>% filter (n.shots >=25)
+> df.all <- filter(df.all, PLAYER_NAME %in% n.players$PLAYER_NAME)
+> 
+> 
+> ## Training and test data 
+> set.seed(100)
+> N <- nrow(df.all)
+> train.set <- (rbinom(N, 1, prob = 0.9) == 1)
+> test.set <- (!train.set)
+> 
+> 
+> 
+> #Model with location
+> glm.fit1 <- glmer(as.factor(FGM) ~ LOCATION + poly(distance.cent, 2) + shot.clock.early +
++                     shot.clock.late + def.type + Dribble.type + heightdiff.cent + age.cent +
++                     (1|PLAYER_NAME), 
++                   data = df.all[train.set,], family = "binomial", 
++                  control=glmerControl(optCtrl=list(maxfun=2e4)))
+Warning messages:
+1: Some predictor variables are on very different scales: consider rescaling 
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.00214123 (tol = 0.001, component 1)
+3: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model is nearly unidentifiable: very large eigenvalue
+ - Rescale variables?
+> summary(glm.fit1)
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: as.factor(FGM) ~ LOCATION + poly(distance.cent, 2) + shot.clock.early +  
+    shot.clock.late + def.type + Dribble.type + heightdiff.cent +      age.cent + (1 | PLAYER_NAME)
+   Data: df.all[train.set, ]
+Control: glmerControl(optCtrl = list(maxfun = 20000))
+
+      AIC       BIC    logLik  deviance  df.resid 
+ 453737.8  453877.6 -226855.9  453711.8    345042 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.5657 -0.8545 -0.6369  1.0233  2.7349 
+
+Random effects:
+ Groups      Name        Variance Std.Dev.
+ PLAYER_NAME (Intercept) 0.02692  0.1641  
+Number of obs: 345055, groups:  PLAYER_NAME, 513
+
+Fixed effects:
+                          Estimate Std. Error z value Pr(>|z|)    
+(Intercept)              1.370e-01  1.175e-02    11.7  < 2e-16 ***
+LOCATIONH                3.712e-02  7.078e-03     5.2 1.56e-07 ***
+poly(distance.cent, 2)1 -3.819e+02  9.207e-01  -414.8  < 2e-16 ***
+poly(distance.cent, 2)2  7.664e+01  7.849e-01    97.6  < 2e-16 ***
+shot.clock.earlyTRUE    -1.055e-01  1.572e-02    -6.7 1.92e-11 ***
+shot.clock.lateTRUE     -2.746e-01  1.405e-02   -19.5  < 2e-16 ***
+def.typeTight           -3.913e-01  9.352e-03   -41.8  < 2e-16 ***
+def.typeVery Tight      -8.030e-01  1.126e-02   -71.3  < 2e-16 ***
+def.typeWide Open        1.857e-01  1.080e-02    17.2  < 2e-16 ***
+Dribble.typeOff dribble -2.178e-01  8.198e-03   -26.6  < 2e-16 ***
+heightdiff.cent          2.878e-02  1.102e-03    26.1  < 2e-16 ***
+age.cent                 1.001e-02  2.017e-03     5.0 6.91e-07 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+               (Intr) LOCATI p(.,2)1 p(.,2)2 sht.clck.rTRUE sht.clck.lTRUE df.tyT df.tVT df.tWO Drb.Od hghtd.
+LOCATIONH      -0.300                                                                                        
+ply(ds.,2)1    -0.074  0.000                                                                                 
+ply(ds.,2)2    -0.028  0.002  0.185                                                                          
+sht.clck.rTRUE -0.108  0.004  0.042  -0.036                                                                  
+sht.clck.lTRUE -0.083  0.002 -0.029  -0.009   0.061                                                          
+def.typTght    -0.383 -0.002  0.137   0.017  -0.078         -0.012                                           
+df.typVryTg    -0.325 -0.009  0.160  -0.016  -0.116          0.011          0.516                            
+df.typWdOpn    -0.405 -0.004 -0.043  -0.021   0.014          0.020          0.414  0.345                     
+Drbbl.typOd    -0.273  0.009  0.070   0.106   0.162         -0.030         -0.169 -0.168  0.137              
+hghtdff.cnt    -0.061 -0.001 -0.052   0.006   0.002         -0.006         -0.043 -0.002  0.037  0.107       
+age.cent        0.004  0.001 -0.007   0.002   0.013         -0.003          0.001  0.010  0.003  0.015  0.002
+fit warnings:
+Some predictor variables are on very different scales: consider rescaling
+convergence code: 0
+Model failed to converge with max|grad| = 0.00214123 (tol = 0.001, component 1)
+Model is nearly unidentifiable: very large eigenvalue
+ - Rescale variables?
+
+> 
+> ## Model wo location
+> glm.fit2 <- glmer(as.factor(FGM) ~  poly(distance.cent, 2) + shot.clock.early +
++                     shot.clock.late + def.type + Dribble.type + heightdiff.cent + age.cent +
++                     (1|PLAYER_NAME), 
++                   data = df.all[train.set,], family = "binomial", 
++                   control=glmerControl(optCtrl=list(maxfun=2e4)))
+Warning messages:
+1: Some predictor variables are on very different scales: consider rescaling 
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model is nearly unidentifiable: very large eigenvalue
+ - Rescale variables?;Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
+> summary(glm.fit2)
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: as.factor(FGM) ~ poly(distance.cent, 2) + shot.clock.early +  
+    shot.clock.late + def.type + Dribble.type + heightdiff.cent +      age.cent + (1 | PLAYER_NAME)
+   Data: df.all[train.set, ]
+Control: glmerControl(optCtrl = list(maxfun = 20000))
+
+      AIC       BIC    logLik  deviance  df.resid 
+ 453763.3  453892.3 -226869.7  453739.3    345043 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.5430 -0.8545 -0.6370  1.0238  2.7097 
+
+Random effects:
+ Groups      Name        Variance Std.Dev.
+ PLAYER_NAME (Intercept) 0.02694  0.1641  
+Number of obs: 345055, groups:  PLAYER_NAME, 513
+
+Fixed effects:
+                          Estimate Std. Error z value Pr(>|z|)    
+(Intercept)              1.556e-01  1.122e-02    13.9  < 2e-16 ***
+poly(distance.cent, 2)1 -3.820e+02  1.117e+00  -342.0  < 2e-16 ***
+poly(distance.cent, 2)2  7.664e+01  9.701e-01    79.0  < 2e-16 ***
+shot.clock.earlyTRUE    -1.059e-01  1.573e-02    -6.7 1.72e-11 ***
+shot.clock.lateTRUE     -2.747e-01  1.405e-02   -19.6  < 2e-16 ***
+def.typeTight           -3.913e-01  9.387e-03   -41.7  < 2e-16 ***
+def.typeVery Tight      -8.026e-01  1.133e-02   -70.9  < 2e-16 ***
+def.typeWide Open        1.859e-01  1.081e-02    17.2  < 2e-16 ***
+Dribble.typeOff dribble -2.182e-01  8.224e-03   -26.5  < 2e-16 ***
+heightdiff.cent          2.880e-02  1.103e-03    26.1  < 2e-16 ***
+age.cent                 1.001e-02  2.018e-03     5.0 7.09e-07 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+               (Intr) p(.,2)1 p(.,2)2 sht.clck.rTRUE sht.clck.lTRUE df.tyT df.tVT df.tWO Drb.Od hghtd.
+ply(ds.,2)1    -0.089                                                                                 
+ply(ds.,2)2    -0.035  0.216                                                                          
+sht.clck.rTRUE -0.113  0.048  -0.045                                                                  
+sht.clck.lTRUE -0.086 -0.031  -0.013   0.061                                                          
+def.typTght    -0.404  0.160   0.024  -0.075         -0.013                                           
+df.typVryTg    -0.345  0.188  -0.016  -0.111          0.010          0.520                            
+df.typWdOpn    -0.423 -0.057  -0.031   0.014          0.021          0.410  0.340                     
+Drbbl.typOd    -0.285  0.086   0.128   0.160         -0.030         -0.164 -0.163  0.134              
+hghtdff.cnt    -0.063 -0.063   0.005   0.001         -0.005         -0.046 -0.006  0.038  0.105       
+age.cent        0.005 -0.009   0.002   0.013         -0.002          0.001  0.010  0.003  0.015  0.003
+fit warnings:
+Some predictor variables are on very different scales: consider rescaling
+convergence code: 0
+Model is nearly unidentifiable: very large eigenvalue
+ - Rescale variables?
+Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
+
+> 
+> 
+> anova(glm.fit1, glm.fit2)
+Data: df.all[train.set, ]
+Models:
+glm.fit2: as.factor(FGM) ~ poly(distance.cent, 2) + shot.clock.early + 
+glm.fit2:     shot.clock.late + def.type + Dribble.type + heightdiff.cent + 
+glm.fit2:     age.cent + (1 | PLAYER_NAME)
+glm.fit1: as.factor(FGM) ~ LOCATION + poly(distance.cent, 2) + shot.clock.early + 
+glm.fit1:     shot.clock.late + def.type + Dribble.type + heightdiff.cent + 
+glm.fit1:     age.cent + (1 | PLAYER_NAME)
+         Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(>Chisq)    
+glm.fit2 12 453763 453892 -226870   453739                             
+glm.fit1 13 453738 453878 -226856   453712 27.513      1  1.561e-07 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> 
+> 
+> predictions1 <- predict(glm.fit1, df.all, type = 'response', allow.new.levels = TRUE)
+> predictions2 <- predict(glm.fit2, df.all, type = 'response', allow.new.levels = TRUE)
+> outcome <- df.all$FGM
+> 
+> LogLoss<-function(actual, predicted)
++ {
++   result<- -1/length(actual)*(sum((actual*log(predicted)+(1-actual)*log(1-predicted))))
++   return(result)
++ }
+> LogLoss(outcome[test.set], predictions1[test.set])
+[1] 0.6552662
+> LogLoss(outcome[test.set], predictions2[test.set])
+[1] 0.6553695
+> ## Small log loss improvement in full model (predictions1)
+> 
+> 
+> predictions <- predict(glm.fit1, df.all, type = 'response', allow.new.levels = TRUE)
+> preds <- prediction(predictions[test.set], df.all$FGM[test.set])
+> performance(preds, "auc")
+An object of class "performance"
+Slot "x.name":
+[1] "None"
+
+Slot "y.name":
+[1] "Area under the ROC curve"
+
+Slot "alpha.name":
+[1] "none"
+
+Slot "x.values":
+list()
+
+Slot "y.values":
+[[1]]
+[1] 0.6380581
+
+
+Slot "alpha.values":
+list()
+
+> 
+> predictions <- predict(glm.fit2, df.all, type = 'response', allow.new.levels = TRUE)
+> preds <- prediction(predictions[test.set], df.all$FGM[test.set])
+> performance(preds, "auc")
+An object of class "performance"
+Slot "x.name":
+[1] "None"
+
+Slot "y.name":
+[1] "Area under the ROC curve"
+
+Slot "alpha.name":
+[1] "none"
+
+Slot "x.values":
+list()
+
+Slot "y.values":
+[[1]]
+[1] 0.6378453
+
+
+Slot "alpha.values":
+list()
+
+> ## Small AUC in full model (glm.fit1)
+> 
+> 
+> ##glmnet: using elastic net with alpha 0.5
+> library(glmnet)
+> 
+> #Without location
+> sparseX <- sparse.model.matrix(~  + (1 + distance.cent) * 
++                 (1 + shot.clock.early + shot.clock.late + def.type + Dribble.type + 
++                  heightdiff.cent + age.cent + PLAYER_NAME), df.all)
+Warning messages:
+1: In sparse.model.matrix(~+(1 + distance.cent) * (1 + shot.clock.early +  :
+  variable 'def.type' converted to a factor
+2: In sparse.model.matrix(~+(1 + distance.cent) * (1 + shot.clock.early +  :
+  variable 'Dribble.type' converted to a factor
+3: In sparse.model.matrix(~+(1 + distance.cent) * (1 + shot.clock.early +  :
+  variable 'PLAYER_NAME' converted to a factor
+> 
+> m1 <- cv.glmnet(sparseX[train.set,],
++                 df.all$FGM[train.set],
++                 alpha = 0.5,
++                 family = 'binomial')
+> 
+> df.all$sparse.hat <- predict(m1, newx = sparseX, type = 'response')[,1]
+> preds <- prediction(df.all$sparse.hat[test.set], df.all$FGM[test.set])
+> perf <- performance(preds, 'tpr', 'fpr')
+> plot(perf)
+> performance(preds, 'auc')
+An object of class "performance"
+Slot "x.name":
+[1] "None"
+
+Slot "y.name":
+[1] "Area under the ROC curve"
+
+Slot "alpha.name":
+[1] "none"
+
+Slot "x.values":
+list()
+
+Slot "y.values":
+[[1]]
+[1] 0.6395949
+
+
+Slot "alpha.values":
+list()
+
+> 
+> 
+> #With location
+> sparseX <- sparse.model.matrix(~  + (1 + distance.cent) * 
++                                  (1 + shot.clock.early + shot.clock.late + def.type + Dribble.type + 
++                                     heightdiff.cent + age.cent + LOCATION + PLAYER_NAME), df.all)
+Warning messages:
+1: In sparse.model.matrix(~+(1 + distance.cent) * (1 + shot.clock.early +  :
+  variable 'def.type' converted to a factor
+2: In sparse.model.matrix(~+(1 + distance.cent) * (1 + shot.clock.early +  :
+  variable 'Dribble.type' converted to a factor
+3: In sparse.model.matrix(~+(1 + distance.cent) * (1 + shot.clock.early +  :
+  variable 'LOCATION' converted to a factor
+4: In sparse.model.matrix(~+(1 + distance.cent) * (1 + shot.clock.early +  :
+  variable 'PLAYER_NAME' converted to a factor
+> 
+> m1 <- cv.glmnet(sparseX[train.set,],
++                 df.all$FGM[train.set],
++                 alpha = 0.5,
++                 family = 'binomial')
+> 
+> df.all$sparse.hat <- predict(m1, newx = sparseX, type = 'response')[,1]
+> preds <- prediction(df.all$sparse.hat[test.set], df.all$FGM[test.set])
+> perf <- performance(preds, 'tpr', 'fpr')
+> plot(perf)
+> performance(preds, 'auc')
+An object of class "performance"
+Slot "x.name":
+[1] "None"
+
+Slot "y.name":
+[1] "Area under the ROC curve"
+
+Slot "alpha.name":
+[1] "none"
+
+Slot "x.values":
+list()
+
+Slot "y.values":
+[[1]]
+[1] 0.6396193
+
+
+Slot "alpha.values":
+list()
+
+> 
+> 
+> ## Practical significance
+> set.seed(100)
+> unique.games <- unique(df.all$MATCHUP)
+> games <- sample(unique.games, 100)
+> sample.games <- filter(df.all, MATCHUP %in% games)
+> 
+> ##Imagine all 20 teams were away teams
+> sample.games$LOCATION <- "A"
+> sample.games$p.hatA <- predict(glm.fit1, sample.games, type = 'response', allow.new.levels = TRUE)
+> 
+> ##Imagine all 20 teams were home teams
+> sample.games$LOCATION <- "H"
+> sample.games$p.hatH <- predict(glm.fit1, sample.games, type = 'response', allow.new.levels = TRUE)
+> 
+> #Points scored (predicted)
+> sample.games <- sample.games %>%
++   mutate(pts.hatA = p.hatA *PTS_TYPE, pts.hatH = p.hatH*PTS_TYPE)
+> 
+> ##Total points per game
+> sample <- sample.games %>%
++   group_by(MATCHUP) %>%
++   summarise(total.hatA = sum(pts.hatA), total.hatH = sum(pts.hatH), diff.pts = total.hatH - total.hatA)
+> 
+> 
+> histogram(sample$diff.pts)
+> quantile(sample$diff.pts, c(0.025, 0.975))
+     2.5%     97.5% 
+0.8487916 1.8435585 
