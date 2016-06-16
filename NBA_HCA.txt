@@ -1,97 +1,4 @@
-> rm(list=ls()) 
-> library(ROCR); library(readr); library(dplyr); library(lme4); 
-> library(mosaic) 
-Loading required package: car
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘quantreg’
-Error: package ‘car’ could not be loaded
-> library(randomForest)
-> library(glmnet)
-> df.1314 <- read_csv("~/Downloads/KOBE 2013_14 Updated Version.csv")
-|================================================================================| 100%   95 MB
-> df.1415 <- read_csv("~/Downloads/KOBE 2014_15 Updated Version.csv")
-Warning: 51333 parsing failures.
- row          col   expected    actual
-3683 DRAFT_YEAR   an integer Undrafted
-3683 DRAFT_ROUND  an integer Undrafted
-3683 DRAFT_NUMBER an integer Undrafted
-3684 DRAFT_YEAR   an integer Undrafted
-3684 DRAFT_ROUND  an integer Undrafted
-.... ............ .......... .........
-.See problems(...) for more details.
-> 
-> 
-> 
-> df1314 <- select(df.1314, GAME_ID, MATCHUP, PLAYER_NAME, SHOT_NUMBER, PERIOD, LOCATION, GAME_CLOCK, SHOT_CLOCK, DRIBBLES, TOUCH_TIME, 
-+                   SHOT_DIST, PTS_TYPE, SHOT_RESULT, CLOSE_DEF_DIST, FGM, PTS, AGE, 
-+                   Team.Shooter, shot.clock, shot.dist, def.type, Dribble.type, dribble.num, 
-+                   MINUTES_REMAINING, SECONDS_REMAINING, HEIGHT_DIFF, defdist)
-> 
-> df1415 <- select(df.1415, GAME_ID, MATCHUP, PLAYER_NAME, SHOT_NUMBER, PERIOD, LOCATION, GAME_CLOCK, SHOT_CLOCK, DRIBBLES, TOUCH_TIME, 
-+                   SHOT_DIST, PTS_TYPE, SHOT_RESULT, CLOSE_DEF_DIST, FGM, PTS, AGE, 
-+                   Team.Shooter, shot.clock, shot.dist, def.type, Dribble.type, dribble.num, 
-+                   MINUTES_REMAINING, SECONDS_REMAINING, HEIGHT_DIFF, defdist)
-> 
-> df.all <- rbind(df1314, df1415)
-> df.all <- na.omit(df.all)
-> df.all <- df.all %>%
-+   mutate(age.cent = AGE-mean(AGE), 
-+          heightdiff.cent = HEIGHT_DIFF - mean(HEIGHT_DIFF),
-+          distance.cent = SHOT_DIST - mean(SHOT_DIST), 
-+          shot.clock.late = SHOT_CLOCK < 4, 
-+          shot.clock.early = SHOT_CLOCK > 22)
-> 
-> ##Save data set with all shots for later work
-> df.games <- df.all
-> 
-> df.all %>% 
-+   group_by(PTS_TYPE, LOCATION) %>%
-+   summarise(mean.shot = mean(FGM))
-Source: local data frame [4 x 3]
-Groups: PTS_TYPE [?]
 
-  PTS_TYPE LOCATION mean.shot
-     (int)    (chr)     (dbl)
-1        2        A 0.4818728
-2        2        H 0.4952306
-3        3        A 0.3610842
-4        3        H 0.3672980
-> 
-> table(df.all$def.type)
-
-      Open      Tight Very Tight  Wide Open 
-    106741     136817      70380      70031 
-> table(df.all$Dribble.type)
-
-Catch and Shoot     Off dribble 
-         194108          189861 
-> 
-> ## Only players with at least 25 shots 
-> n.players <- df.all %>% group_by(PLAYER_NAME) %>% summarise(n.shots = n()) %>% filter (n.shots >=25)
-> df.all <- filter(df.all, PLAYER_NAME %in% n.players$PLAYER_NAME)
-> 
-> 
-> ## Training and test data 
-> set.seed(100)
-> N <- nrow(df.all)
-> train.set <- (rbinom(N, 1, prob = 0.9) == 1)
-> test.set <- (!train.set)
-> 
-> 
-> 
-> #Model with location
-> glm.fit1 <- glmer(as.factor(FGM) ~ LOCATION + poly(distance.cent, 2) + shot.clock.early +
-+                     shot.clock.late + def.type + Dribble.type + heightdiff.cent + age.cent +
-+                     (1|PLAYER_NAME), 
-+                   data = df.all[train.set,], family = "binomial", 
-+                  control=glmerControl(optCtrl=list(maxfun=2e4)))
-Warning messages:
-1: Some predictor variables are on very different scales: consider rescaling 
-2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
-  Model failed to converge with max|grad| = 0.00214123 (tol = 0.001, component 1)
-3: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
-  Model is nearly unidentifiable: very large eigenvalue
- - Rescale variables?
 > summary(glm.fit1)
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
@@ -115,39 +22,37 @@ Number of obs: 345055, groups:  PLAYER_NAME, 513
 Fixed effects:
                           Estimate Std. Error z value Pr(>|z|)    
 (Intercept)              1.370e-01  1.175e-02    11.7  < 2e-16 ***
-LOCATIONH                3.712e-02  7.078e-03     5.2 1.56e-07 ***
-poly(distance.cent, 2)1 -3.819e+02  9.207e-01  -414.8  < 2e-16 ***
-poly(distance.cent, 2)2  7.664e+01  7.849e-01    97.6  < 2e-16 ***
-shot.clock.earlyTRUE    -1.055e-01  1.572e-02    -6.7 1.92e-11 ***
+LOCATIONH                3.712e-02  7.079e-03     5.2 1.56e-07 ***
+poly(distance.cent, 2)1 -3.819e+02  8.472e-01  -450.8  < 2e-16 ***
+poly(distance.cent, 2)2  7.664e+01  7.901e-01    97.0  < 2e-16 ***
+shot.clock.earlyTRUE    -1.055e-01  1.573e-02    -6.7 1.96e-11 ***
 shot.clock.lateTRUE     -2.746e-01  1.405e-02   -19.5  < 2e-16 ***
-def.typeTight           -3.913e-01  9.352e-03   -41.8  < 2e-16 ***
+def.typeTight           -3.913e-01  9.342e-03   -41.9  < 2e-16 ***
 def.typeVery Tight      -8.030e-01  1.126e-02   -71.3  < 2e-16 ***
 def.typeWide Open        1.857e-01  1.080e-02    17.2  < 2e-16 ***
-Dribble.typeOff dribble -2.178e-01  8.198e-03   -26.6  < 2e-16 ***
-heightdiff.cent          2.878e-02  1.102e-03    26.1  < 2e-16 ***
-age.cent                 1.001e-02  2.017e-03     5.0 6.91e-07 ***
+Dribble.typeOff dribble -2.178e-01  8.189e-03   -26.6  < 2e-16 ***
+heightdiff.cent          1.124e-01  4.305e-03    26.1  < 2e-16 ***
+age.cent                 1.001e-02  2.017e-03     5.0 6.92e-07 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
                (Intr) LOCATI p(.,2)1 p(.,2)2 sht.clck.rTRUE sht.clck.lTRUE df.tyT df.tVT df.tWO Drb.Od hghtd.
 LOCATIONH      -0.300                                                                                        
-ply(ds.,2)1    -0.074  0.000                                                                                 
-ply(ds.,2)2    -0.028  0.002  0.185                                                                          
-sht.clck.rTRUE -0.108  0.004  0.042  -0.036                                                                  
-sht.clck.lTRUE -0.083  0.002 -0.029  -0.009   0.061                                                          
-def.typTght    -0.383 -0.002  0.137   0.017  -0.078         -0.012                                           
-df.typVryTg    -0.325 -0.009  0.160  -0.016  -0.116          0.011          0.516                            
-df.typWdOpn    -0.405 -0.004 -0.043  -0.021   0.014          0.020          0.414  0.345                     
-Drbbl.typOd    -0.273  0.009  0.070   0.106   0.162         -0.030         -0.169 -0.168  0.137              
-hghtdff.cnt    -0.061 -0.001 -0.052   0.006   0.002         -0.006         -0.043 -0.002  0.037  0.107       
-age.cent        0.004  0.001 -0.007   0.002   0.013         -0.003          0.001  0.010  0.003  0.015  0.002
+ply(ds.,2)1    -0.061  0.000                                                                                 
+ply(ds.,2)2    -0.012  0.000 -0.109                                                                          
+sht.clck.rTRUE -0.108  0.004  0.052  -0.049                                                                  
+sht.clck.lTRUE -0.084  0.002 -0.027  -0.004   0.061                                                          
+def.typTght    -0.381 -0.002  0.127  -0.023  -0.077         -0.011                                           
+df.typVryTg    -0.323 -0.008  0.160  -0.064  -0.114          0.012          0.515                            
+df.typWdOpn    -0.406 -0.004 -0.036  -0.006   0.014          0.020          0.416  0.346                     
+Drbbl.typOd    -0.271  0.008  0.036   0.097   0.160         -0.029         -0.175 -0.174  0.140              
+hghtdff.cnt    -0.062 -0.001 -0.053   0.022   0.001         -0.006         -0.043 -0.002  0.037  0.109       
+age.cent        0.004  0.001 -0.007   0.004   0.013         -0.003          0.001  0.010  0.003  0.016  0.002
 fit warnings:
 Some predictor variables are on very different scales: consider rescaling
 convergence code: 0
-Model failed to converge with max|grad| = 0.00214123 (tol = 0.001, component 1)
-Model is nearly unidentifiable: very large eigenvalue
- - Rescale variables?
+Model failed to converge with max|grad| = 0.00158144 (tol = 0.001, component 1)
 
 > 
 > ## Model wo location
@@ -159,9 +64,9 @@ Model is nearly unidentifiable: very large eigenvalue
 Warning messages:
 1: Some predictor variables are on very different scales: consider rescaling 
 2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
-  Model is nearly unidentifiable: very large eigenvalue
- - Rescale variables?;Model is nearly unidentifiable: large eigenvalue ratio
- - Rescale variables?
+  unable to evaluate scaled gradient
+3: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
 > summary(glm.fit2)
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
@@ -184,39 +89,36 @@ Number of obs: 345055, groups:  PLAYER_NAME, 513
 
 Fixed effects:
                           Estimate Std. Error z value Pr(>|z|)    
-(Intercept)              1.556e-01  1.122e-02    13.9  < 2e-16 ***
-poly(distance.cent, 2)1 -3.820e+02  1.117e+00  -342.0  < 2e-16 ***
-poly(distance.cent, 2)2  7.664e+01  9.701e-01    79.0  < 2e-16 ***
-shot.clock.earlyTRUE    -1.059e-01  1.573e-02    -6.7 1.72e-11 ***
-shot.clock.lateTRUE     -2.747e-01  1.405e-02   -19.6  < 2e-16 ***
-def.typeTight           -3.913e-01  9.387e-03   -41.7  < 2e-16 ***
-def.typeVery Tight      -8.026e-01  1.133e-02   -70.9  < 2e-16 ***
-def.typeWide Open        1.859e-01  1.081e-02    17.2  < 2e-16 ***
-Dribble.typeOff dribble -2.182e-01  8.224e-03   -26.5  < 2e-16 ***
-heightdiff.cent          2.880e-02  1.103e-03    26.1  < 2e-16 ***
-age.cent                 1.001e-02  2.018e-03     5.0 7.09e-07 ***
+(Intercept)              1.556e-01  1.149e-02   13.54  < 2e-16 ***
+poly(distance.cent, 2)1 -3.820e+02  3.121e+00 -122.38  < 2e-16 ***
+poly(distance.cent, 2)2  7.664e+01  2.307e+00   33.23  < 2e-16 ***
+shot.clock.earlyTRUE    -1.059e-01  1.605e-02   -6.60 4.23e-11 ***
+shot.clock.lateTRUE     -2.747e-01  1.410e-02  -19.48  < 2e-16 ***
+def.typeTight           -3.913e-01  1.022e-02  -38.29  < 2e-16 ***
+def.typeVery Tight      -8.026e-01  1.289e-02  -62.25  < 2e-16 ***
+def.typeWide Open        1.859e-01  1.091e-02   17.04  < 2e-16 ***
+Dribble.typeOff dribble -2.182e-01  8.538e-03  -25.56  < 2e-16 ***
+heightdiff.cent          1.124e-01  4.295e-03   26.18  < 2e-16 ***
+age.cent                 1.001e-02  2.018e-03    4.96 7.08e-07 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Correlation of Fixed Effects:
                (Intr) p(.,2)1 p(.,2)2 sht.clck.rTRUE sht.clck.lTRUE df.tyT df.tVT df.tWO Drb.Od hghtd.
-ply(ds.,2)1    -0.089                                                                                 
-ply(ds.,2)2    -0.035  0.216                                                                          
-sht.clck.rTRUE -0.113  0.048  -0.045                                                                  
-sht.clck.lTRUE -0.086 -0.031  -0.013   0.061                                                          
-def.typTght    -0.404  0.160   0.024  -0.075         -0.013                                           
-df.typVryTg    -0.345  0.188  -0.016  -0.111          0.010          0.520                            
-df.typWdOpn    -0.423 -0.057  -0.031   0.014          0.021          0.410  0.340                     
-Drbbl.typOd    -0.285  0.086   0.128   0.160         -0.030         -0.164 -0.163  0.134              
-hghtdff.cnt    -0.063 -0.063   0.005   0.001         -0.005         -0.046 -0.006  0.038  0.105       
-age.cent        0.005 -0.009   0.002   0.013         -0.002          0.001  0.010  0.003  0.015  0.003
+ply(ds.,2)1    -0.258                                                                                 
+ply(ds.,2)2    -0.054  0.021                                                                          
+sht.clck.rTRUE -0.139  0.172  -0.124                                                                  
+sht.clck.lTRUE -0.062 -0.091  -0.019   0.047                                                          
+def.typTght    -0.453  0.423  -0.014   0.000         -0.046                                           
+df.typVryTg    -0.397  0.498  -0.111  -0.007         -0.030          0.606                            
+df.typWdOpn    -0.373 -0.144  -0.042  -0.005          0.033          0.320  0.236                     
+Drbbl.typOd    -0.323  0.158   0.274   0.148         -0.045         -0.093 -0.096  0.103              
+hghtdff.cnt    -0.007 -0.158   0.046  -0.034          0.006         -0.107 -0.088  0.052  0.107       
+age.cent        0.009 -0.032   0.008   0.007          0.000         -0.011 -0.005  0.007  0.010  0.012
 fit warnings:
 Some predictor variables are on very different scales: consider rescaling
 convergence code: 0
-Model is nearly unidentifiable: very large eigenvalue
- - Rescale variables?
-Model is nearly unidentifiable: large eigenvalue ratio
- - Rescale variables?
+
 
 > 
 > 
@@ -234,7 +136,7 @@ glm.fit2 12 453763 453892 -226870   453739
 glm.fit1 13 453738 453878 -226856   453712 27.513      1  1.561e-07 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-> 
+
 > 
 > predictions1 <- predict(glm.fit1, df.all, type = 'response', allow.new.levels = TRUE)
 > predictions2 <- predict(glm.fit2, df.all, type = 'response', allow.new.levels = TRUE)
@@ -301,8 +203,8 @@ Slot "y.values":
 Slot "alpha.values":
 list()
 
-> ## Small AUC in full model (glm.fit1)
-> 
+
+
 > 
 > ##glmnet: using elastic net with alpha 0.5
 > library(glmnet)
