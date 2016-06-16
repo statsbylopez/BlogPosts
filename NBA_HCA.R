@@ -6,6 +6,8 @@ library(lme4)
 library(mosaic) 
 library(randomForest)
 library(glmnet)
+library(dotwhisker)
+library(broom)
 
 df.1314 <- read_csv("~/Downloads/KOBE 2013_14 Updated Version.csv")
 df.1415 <- read_csv("~/Downloads/KOBE 2014_15 Updated Version.csv")
@@ -26,8 +28,8 @@ df.all <- rbind(df1314, df1415)
 df.all <- na.omit(df.all)
 df.all <- df.all %>%
   mutate(age.cent = AGE-mean(AGE), 
-         heightdiff.cent = HEIGHT_DIFF - mean(HEIGHT_DIFF),
-         distance.cent = SHOT_DIST - mean(SHOT_DIST), 
+         heightdiff.cent = scale(HEIGHT_DIFF),
+         distance.cent = scale(SHOT_DIST), 
          shot.clock.late = SHOT_CLOCK < 4, 
          shot.clock.early = SHOT_CLOCK > 22)
 
@@ -77,6 +79,20 @@ summary(glm.fit2)
 
 
 anova(glm.fit1, glm.fit2)
+
+
+## Coefficient plot
+tidy.fit <- tidy(glm.fit1)
+tidy.fit <- tidy.fit[c(2,5:13),]
+tidy.fit$term <- c("Location: Home", "Shot Clock: Early", "Shot Clock: Late", 
+                   "Def Type: Tight", "Def Type: Very Tight", "Def Type: Wide Open",
+                   "Off Dribble", "Height Difference", "Age", "Player name (SD)")
+tidy.fit <- tidy.fit %>% arrange(estimate)
+dwplot(tidy.fit) +
+  theme_bw() + xlab("Coefficient Estimate, log-odds of a made shot") + ylab("") +
+  geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+  ggtitle("Predicting Shot Success") +
+  theme(plot.title = element_text(face="bold"), legend.position="none")
 
 ##Predictions from mixed model
 predictions1 <- predict(glm.fit1, df.all, type = 'response', allow.new.levels = TRUE)
@@ -166,5 +182,34 @@ sample <- sample.games %>%
 
 histogram(sample$diff.pts)
 quantile(sample$diff.pts, c(0.025, 0.975))
+
+
+
+
+
+## Random forest not working
+
+
+fit.rf1 <- randomForest(FGM ~ distance.cent, 
+                        data=df.all.reduced, importance=TRUE, ntree=250)
+predict(fit.rf1, df.all[1:10,], type = "prob")
+
+
+fit.rf2 <- randomForest(as.factor(FGM) ~ shot.clock.early +
+                          shot.clock.late + def.type + Dribble.type + 
+                          heightdiff.cent + age.cent+ distance.cent, 
+                        data=df.all.reduced, importance=TRUE, 
+                        ntree=2000)
+
+
+predictions1 <- predict(fit.rf1, df.all[1:10,], type = "prob")
+predictions2 <- predict(fit.rf2, df.all[test.set,], type = "prob")[,2]
+preds1 <- prediction(predictions1[test.set], df.all$FGM[test.set])
+preds2 <- prediction(predictions2[test.set], df.all$FGM[test.set])
+performance(preds1, "auc")
+performance(preds2, "auc")
+varImpPlot(fit.rf1)
+
+plot(performance(preds1, 'tpr', 'fpr'))
 
 
