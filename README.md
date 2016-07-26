@@ -1,5 +1,5 @@
 # BlogPosts
 
-Blog post code from my [website](www.statsbylopez.com)
+Blog post code from my [website](https://statsbylopez.com/)
 
 Let me know if you see any errors!
