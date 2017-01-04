@@ -1,4 +1,4 @@
-tab.coaches <- read.csv("~/Dropbox/BlogPosts/coaches_clean.csv")
+tab.coaches <- read.csv("~/Dropbox/BlogPosts/BlogPosts/coaches_clean.csv")
 library(dplyr); library(ggplot2); library(Matching)
 set.seed(0)
 
@@ -13,8 +13,9 @@ tab.coaches <- tab.coaches %>%
 fired.temp <- filter(tab.coaches, fired ==1)
 mean(fired.temp$f.win_p - fired.temp$win_p) * 16
 
-### Estimate coach firing probability
-fit.glm <- glm(fired ~ win_p + base_win_p + year1 + year2 + div_pct + year3 + SoS + rings_per_yr + gm_change 
+### Estimate coach firing probability; covariates from Glickman and Chase
+fit.glm <- glm(fired ~ win_p + base_win_p + year1 + year2 + div_pct + year3 + SoS + 
+                 rings_per_yr + gm_change 
                + years, data = tab.coaches, family = binomial())
 tab.coaches$predict.prob <- predict(fit.glm,tab.coaches,  type = "response")
 tab.coaches$fired.cat <- ifelse(tab.coaches$fired == 1, "Fired", "Kept")
@@ -23,8 +24,8 @@ tab.coaches$fired.cat <- ifelse(tab.coaches$fired == 1, "Fired", "Kept")
 ### Compare probabilities
 p <- ggplot(tab.coaches, aes(x = fired.cat, y = predict.prob))
 p + geom_jitter() + coord_flip()+
-  xlab("") + ylab("Predicted probability of being fired") +
-labs(title = "Probabiliy of being fired")
+  xlab("") + ylab("Predicted probability of a coach being fired") +
+labs(title = "Probability of a coach being fired")
 
 ## Identify the outlier
 filter(tab.coaches, fired.cat == "Kept" & predict.prob > 0.75)
@@ -49,8 +50,8 @@ p <- ggplot(tab.coaches, aes(x = fired.cat, y = predict.prob))
 p + geom_jitter(aes(colour = Matched, fill = Matched, alpha = Matched), 
                 colour = "black", pch = 21, size = 2) + coord_flip() +
   scale_alpha_discrete(range = c(0.4, 1)) +
-  xlab("") + ylab("Predicted probability of being fired") +
-  labs(title = "Probability of being fired")
+  xlab("") + ylab("Predicted probability of a coach being fired") +
+  labs(title = "Probability of a coach being fired")
 
 
 ##### Love plot to assess standardized bias
@@ -119,49 +120,14 @@ p + theme(legend.position = "none") +
   geom_label_repel(data=filter(bias.all, Type == 0, abs(std.diff) > 0.35), aes(label=var)) +
   geom_hline(yintercept = 0.25, lty = 2, colour = "red")
 
+fit.outcome <- lm(f.win_p ~ win_p + base_win_p + year1 + year2 + div_pct + year3 + SoS + 
+                 rings_per_yr + gm_change + years + fired.cat, 
+               data = Matched.Subset)
+summary(fit.outcome)
 
 
-
-ytg.pf <- ggplot(Matched.Subset, aes(x = predict.prob, group = fired, colour = fired, fill = fired)) 
-ytg.pf + geom_density(position = "identity", alpha = 0.2)
-
-
-### Love plot
-
-ggplot(tab.coaches, aes(x = round(f.win_p*16), fill = as.factor(fired))) +
-  geom_histogram()
-
-ggplot(tab.coaches, aes(x = round(f.win_p*16),fill = as.factor(fired))) +
-  geom_histogram(colour = "black", bins = 17) +
-  facet_wrap(~ fired) +
-  guides(fill = FALSE) +  # to remove the legend
-  theme_bw() 
-
-
-ggplot(ungroup(Matched.Subset), aes(x = round(f.win_p*16),fill = as.factor(fired))) +
-  geom_histogram(data = Matched.Subset[, -1], fill = "grey", alpha = .5, bins = 15) +
-  geom_histogram(colour = "black", bins = 15) +
-  facet_wrap(~ fired) +
-  guides(fill = FALSE) +  # to remove the legend
-  theme_bw() 
-
-
-
-ggplot(ungroup(Matched.Subset), aes(x = round(f.win_p*16)-round(win_p*16),fill = as.factor(fired))) +
-  geom_histogram(data = Matched.Subset[, -1], fill = "grey", alpha = .5, bins = 15) +
-  geom_histogram(colour = "black", bins = 15) +
-  facet_wrap(~ fired) +
-  guides(fill = FALSE) +  # to remove the legend
-  theme_bw() 
-
-
-
-ggplot(ungroup(Matched.Subset), aes(x = round(f.win_p*16)-round(win_p*16),
-                                    fill = as.factor(fired))) +
-  geom_density()
-
-Matched.Subset %>%
-  group_by(fired) %>%
-  summarise(ave.diff = mean(f.win_p - win_p) * 16)
-
+fit.outcome <- lm(f.win_p ~ fired.cat, 
+                  data = Matched.Subset)
+summary(fit.outcome)
+ 
 
