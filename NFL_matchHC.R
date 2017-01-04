@@ -1,4 +1,4 @@
-tab.coaches <- read.csv("~/Dropbox/BlogPosts/BlogPosts/coaches_clean.csv")
+tab.coaches <- read.csv("https://raw.githubusercontent.com/statsbylopez/BlogPosts/master/coaches_clean.csv")
 library(dplyr); library(ggplot2); library(Matching)
 set.seed(0)
 
