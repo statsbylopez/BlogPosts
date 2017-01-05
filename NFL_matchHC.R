@@ -1,8 +1,9 @@
-tab.coaches <- read.csv("https://raw.githubusercontent.com/statsbylopez/BlogPosts/master/coaches_clean.csv")
+### Read in the data and packages
+tab.coaches <- read.csv("~/Dropbox/BlogPosts/BlogPosts/coaches_clean.csv")
 library(dplyr); library(ggplot2); library(Matching)
 set.seed(0)
 
-## Set up to have data direct from Github
+### Create a variable for future winning percentage
 tab.coaches <- tab.coaches %>%
   group_by(TeamID) %>%
   mutate(f.win_p = lead(win_p, 1)) %>%
