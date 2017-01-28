@@ -1,21 +1,24 @@
 source("config.R")
-load(file.path(data_raw, "bigfour.rda"))
+load("~/Desktop/bigfour_public.rda")
+library(dplyr); library(tidyr); library(ggplot2)
 ### This uses the public .rda available at 
 ## https://github.com/bigfour/competitiveness/blob/master/data/bigfour_public.rda
 
+winter <- filter(bigfour_public, sport == "nhl"|sport == "nba")
+
 winter.h <- winter %>% 
   mutate(sdiff = home_score - visitor_score, gameDate = as.Date(gameDate), type = "home") %>%
-  select(gameDate, type, home_team, p_home, sdiff, sport, season) %>%
-  rename(team = home_team, prob = p_home)
+  select(gameDate, type, home_team, sdiff, sport) %>%
+  rename(team = home_team)
 
 winter.v <- winter %>% 
   mutate(sdiff = visitor_score - home_score, gameDate = as.Date(gameDate), type = "vis") %>%
-  select(gameDate, type, visitor_team, p_vis, sdiff, sport, season) %>%
-  rename(team = visitor_team, prob = p_vis)
+  select(gameDate, type, visitor_team, sdiff, sport) %>%
+  rename(team = visitor_team)
 
 winter.all <- rbind(winter.h, winter.v) %>% 
   arrange(team, gameDate) %>%
-  group_by(season, team) %>%
+  group_by(team) %>%
   mutate(date.lag = gameDate - lag(gameDate, 1), 
          date.lag = ifelse(date.lag > 3, 3, date.lag), 
          date.lag2 = gameDate - lag(gameDate, 2), 
@@ -33,6 +36,7 @@ winter.sum <- winter.all %>% filter(type == "home") %>%
   na.omit() %>%
   group_by(date.lag, sport) %>%
   summarise(ave.prob = mean(sdiff > 0), n.ex = n(), me = 1/sqrt(n.ex))
+
 
 limits <- aes(ymin= ave.prob - me, ymax = ave.prob + me)
 
