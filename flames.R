@@ -10,7 +10,7 @@ flames <- flames %>%
          game.seas.num = seas + game.seas, 
          net = taken - drawn)
 
-flames %>%
+flames %>% 
   group_by(post) %>%
   summarise(cor.pair = cor(taken, drawn), 
             mean.taken = mean(taken), 
