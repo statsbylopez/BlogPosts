@@ -1,5 +1,5 @@
 library(dplyr); library(ggplot2)
-flames <- read.csv("~/Dropbox/BlogPosts/BlogPosts/flames.csv")
+flames <- read.csv("https://raw.githubusercontent.com/statsbylopez/BlogPosts/master/flames.csv")
 names(flames) <- c("gid", "taken", "drawn")
 flames$post <- flames$gid > 2015020742
 flames$seas <- as.numeric(substr(flames$gid, 1, 4))
