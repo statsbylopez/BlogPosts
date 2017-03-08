@@ -143,7 +143,6 @@ ann_text <- data.frame(x = c(450, 450, 450, 450, 450, 450),
                                    Gambletron.wp$seconds[which.min(Gambletron.wp$Pats.wp)]))
 cols <- c(brewer.pal(5,"Set1"), "#A6611A")
 
-cols <- brewer.pal(6, "Set1")
 
 ggplot(LockNett.Pats, aes(3600-seconds, Pats.wp)) + geom_path(colour = cols[5]) + 
   scale_x_continuous("",labels = c("Q1", "Q2", "Q3", "Q4", "End of Reg"), 
