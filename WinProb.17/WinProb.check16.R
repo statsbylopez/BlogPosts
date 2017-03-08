@@ -61,7 +61,7 @@ LockNett.test <- mutate(LockNett.test, won.off = as.numeric(as.character(won.off
 #############################################
 
 ## phdFootball
-phd.wp <- read.csv("~/Dropbox/BlogPosts/BlogPosts/SuperBowl_phdFootball.csv")
+phd.wp <- read.csv("https://raw.githubusercontent.com/statsbylopez/BlogPosts/master/WinProb.17/phdFootball.csv")
 phd.wp <- filter(phd.wp, quarter!="OT") %>%
   mutate(qtr = ifelse(quarter == "Q1", 1, 
                       ifelse(quarter == "Q2", 2, 
@@ -82,7 +82,7 @@ cmu.wp <- filter(cmu.wp, !is.na(Away.WP.pre), as.numeric(as.character(qtr)) < 5)
 
 
 ## PFR model
-pfr.wp <- read.csv("https://raw.githubusercontent.com/statsbylopez/BlogPosts/master/PFR_SuperBowl.csv")
+pfr.wp <- read.csv("https://raw.githubusercontent.com/statsbylopez/BlogPosts/master/WinProb.17/PFR.csv")
 pfr.wp <- filter(pfr.wp, !is.na(Win.),  Quarter!="OT") %>% 
   mutate(Pats.wp = lag(1 - Win./100, 0), qtr = (as.numeric(as.character(Quarter)))) %>%
   select(-Detail) %>%
