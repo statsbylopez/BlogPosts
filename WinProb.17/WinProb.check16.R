@@ -261,7 +261,7 @@ ann_text <- data.frame(x = c(.25, 0.75), y = c(0.75, 0.25),
                        qtr.cat = factor("Quarter 1"))
 
 rf_plot <- ggplot(data = LockNett.test.samp, aes(x = winprob.off, y = as.numeric(won.off), 
-                           group = qtr.cat)) + 
+                           group = qtr.cat)) +  
   geom_point(data = LockNett.binned,  
              aes(x = p_home_bin, y = home_win_bin_pct, size = N), alpha = 0.5) + 
   geom_smooth(method = "loess") +
