@@ -11,7 +11,7 @@ library(GGally)
 
 
 #############################################
-##### Lock and Nettleton model
+##### Lock and Nettleton model: requires Armchair Analysis data
 #############################################
 
 
