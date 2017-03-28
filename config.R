@@ -8,7 +8,7 @@ if (Sys.info()["user"] == "Brian") {
 
 if (Sys.info()["user"] == "mlopez1") {
   # For Mike
-  constants <- "C:/Users/Brian/Dropbox/Sim/MJL_code/MLconstants/"
+  constants <- "~/Dropbox/Sim/MJL_code/MLconstants/"
   output <- "~/Dropbox/Sim/MJL_code/Outcomes/"
 }
 
