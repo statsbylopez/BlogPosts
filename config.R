@@ -12,6 +12,7 @@ if (Sys.info()["user"] == "mlopez1") {
   output <- "~/Dropbox/Sim/MJL_code/Outcomes/"
 }
 
+
 library(knitr)
 library(readxl)
 library(readr)
