@@ -11,7 +11,7 @@ if (Sys.info()["user"] == "mlopez1") {
   constants <- "~/Dropbox/Sim/MJL_code/MLconstants/"
   output <- "~/Dropbox/Sim/MJL_code/Outcomes/"
 }
-
+ 
 library(knitr)
 library(readxl)
 library(readr)
