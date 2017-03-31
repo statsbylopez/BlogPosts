@@ -5,6 +5,7 @@ if (Sys.info()["user"] == "Brian") {
   constants <- "C:/Users/Brian/Dropbox/Sim/MJL_code/MLconstants/"
   output <- "C:/Users/Brian/Dropbox/Sim/MJL_code/Outcomes/"
   gamefiles <- "C:/Users/Brian/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
+  gamedates <- "C:/Users/Brian/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
 }
 
 if (Sys.info()["user"] == "mlopez1") {
@@ -12,6 +13,7 @@ if (Sys.info()["user"] == "mlopez1") {
   constants <- "~/Dropbox/Sim/MJL_code/MLconstants/"
   output <- "~/Dropbox/Sim/MJL_code/Outcomes/"
   gamefiles <- "~/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
+  gamedates <- "~/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
 }
 
 
