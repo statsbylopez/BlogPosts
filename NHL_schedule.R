@@ -222,13 +222,13 @@ pts.real <- all.sim %>% group_by(Team) %>% summarise(n.games = n(),
 
 all.both <- bind_rows(all.teams, all.teams1)
 all.both.sum <- all.both %>% group_by(Team, Schedule) %>% 
-  summarise(median.wins = median(wins))
+  summarise(mean.wins = mean(wins))
 
 ### Add in team colors
 
 all.both.sum <- left_join(all.both.sum, teamcolors1, by = c("Team" = "name"))
 
-benefit <- all.both.sum %>% group_by(Team) %>% mutate(sched.benefit = median.wins - lag(median.wins))  %>%
+benefit <- all.both.sum %>% group_by(Team) %>% mutate(sched.benefit = mean.wins - lag(mean.wins))  %>%
   select(Team, Schedule, sched.benefit, division, sport, primary) %>% na.omit()
 
 p2 <- ggplot(benefit, aes(x = reorder(Team, sched.benefit), sched.benefit, fill = Team)) + 
@@ -248,4 +248,28 @@ ggsave("~/Dropbox/BlogPosts/BlogPosts/figure/NHL_diff3.pdf", p2, height = 10, wi
 ## LA - 5 times against Coyotes
 ## Devils: Rangers and Penguins five times
 ## 
+temp <- all.both
+all.both1 <- all.both %>% 
+  left_join(teamcolors1, by = c("Team" = "name")) %>%
+  mutate(Eastern = (division == "Atlantic" | division == "Metro")) %>%
+  group_by(Schedule, Team) %>%
+  mutate(iteration = 1:n()) %>% 
+  ungroup() 
+all.both2 <- all.both1 %>%
+  group_by(iteration, Schedule, Eastern) %>% 
+  arrange(iteration, Schedule, Eastern, -wins) %>% 
+  mutate(rank = 1:n(), playoffs = rank <= 8)
+
+all.both3 <- all.both2 %>%
+  ungroup() %>%
+  group_by(Team, Schedule) %>%
+  summarise(mean.playoffs = sum(playoffs == TRUE)/n())
+
+all.both4 <- spread(all.both3, Schedule, mean.playoffs) %>%
+  rename(Current = `Unbalanced/current`)
+
+all.both4
+
+
+
 
