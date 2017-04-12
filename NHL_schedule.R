@@ -7,9 +7,8 @@ library(broom)
 library(teamcolors)
 library(mosaic)
 set.seed(100)
-#nsim <- 100000
 nsim <- 1000
-### Note: 100000 used for Part II
+### Note: I used more sim's for part II
 
 ########################
 ### Joy Division plot
