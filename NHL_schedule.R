@@ -241,13 +241,9 @@ p2 <- ggplot(benefit, aes(x = reorder(Team, sched.benefit), sched.benefit, fill 
   guides(color = FALSE, fill = FALSE) 
 p2
 
-ggsave("~/Dropbox/BlogPosts/BlogPosts/figure/NHL_diff3.pdf", p2, height = 10, width = 8)
+ggsave("~/Dropbox/BlogPosts/BlogPosts/figure/NHL_diff.pdf", p2, height = 10, width = 8)
 
-## Calgary - 5 times against Vancouver
-## LA - 5 times against Coyotes
-## Devils: Rangers and Penguins five times
-## 
-temp <- all.both
+
 all.both1 <- all.both %>% 
   left_join(teamcolors1, by = c("Team" = "name")) %>%
   mutate(Eastern = (division == "Atlantic" | division == "Metro")) %>%
