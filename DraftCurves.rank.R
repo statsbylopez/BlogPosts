@@ -223,7 +223,8 @@ p + geom_point() + geom_smooth(method = "loess") + facet_grid(~Sport + Rnd)+them
 
 
 ######################## 
-### Future idea: adjust value to account for draft odds
+### Future ideas: adjust value to account for draft odds
+### Identify the lottery odds that would allow the NBA to match the NFLs curve
 ########################
 
 nba.fit <- loess(Outcome ~ Pk, data = filter(all.sports, Pk <= 60, Sport == "NBA"), span = 0.1)
