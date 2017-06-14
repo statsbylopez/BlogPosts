@@ -1,6 +1,6 @@
 ### Load in the data
 library(tidyverse)
-picks.all <- read.csv("https://raw.githubusercontent.com/statsbylopez/BlogPosts/master/mlb.csv")
+picks.all <- read.csv("mlb.csv")
 
 ##########################
 ## Variable descriptions:
