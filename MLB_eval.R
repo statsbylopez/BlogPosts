@@ -1,6 +1,27 @@
 ### Load in the data
 library(tidyverse)
 picks.all <- read.csv("https://raw.githubusercontent.com/statsbylopez/BlogPosts/master/mlb.csv")
+
+##########################
+## Variable descriptions:
+##########################
+## Date of game
+## team.type: away/home
+## team: team backed
+## ML: opening money line of chosen team
+## opp: opponent
+## prob.open: implied probability of a win using opening ML
+## prob.tobeat: implied probability to beat
+## prob.sim: model estimated probability
+## units: wager amount
+## towin: amoung to win
+## won: TRUE/FALSE if the team won
+## profit: game-level profit
+## profit.cum: cumulative profit to date
+## prob.close: implied probability of a win using closing ML
+## delta.price: change in perceived probability, opening to closing ML
+##########################
+
 picks.all <- picks.all %>% mutate(pick.no = 1:n())
 picks.all %>% group_by(team.type) %>% count()
 picks.all %>% group_by(ML > 100) %>% count()
