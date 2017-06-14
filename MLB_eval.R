@@ -1,6 +1,6 @@
 ### Load in the data
 library(tidyverse)
-picks.all <- read.csv("/Users/mlopez1/Dropbox/BlogPosts/BlogPosts/mlb.csv")
+picks.all <- read.csv("https://raw.githubusercontent.com/statsbylopez/BlogPosts/master/mlb.csv")
 picks.all <- picks.all %>% mutate(pick.no = 1:n())
 picks.all %>% group_by(team.type) %>% count()
 picks.all %>% group_by(ML > 100) %>% count()
