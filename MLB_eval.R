@@ -2,7 +2,7 @@
 library(tidyverse)
 picks.all <- read.csv("mlb.csv")
 
-##########################
+########################## 
 ## Variable descriptions:
 ##########################
 ## Date of game
