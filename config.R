@@ -17,6 +17,15 @@ if (Sys.info()["user"] == "mlopez1") {
 }
 
 
+if (Sys.info()["user"] == "elopez") {
+  # For Erin
+  constants <- "C:/Users/elopez/Dropbox/Sim/MJL_code/MLconstants/"
+  output <- "C:/Users/elopez/Dropbox/Sim/MJL_code/Outcomes/"
+  gamefiles <- "C:/Users/elopez/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
+  gamedates <- "C:/Users/elopez/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
+}
+
+
 library(knitr)
 library(readxl)
 library(readr)
