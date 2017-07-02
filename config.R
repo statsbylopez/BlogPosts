@@ -25,6 +25,14 @@ if (Sys.info()["user"] == "elopez") {
   gamedates <- "C:/Users/elopez/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
 }
 
+if (Sys.info()["user"] == "jenkins") {
+  # For Apple Sim Box
+  constants <- "~/Dropbox/Sim/MJL_code/MLconstants/"
+  output <- "~/Dropbox/Sim/MJL_code/Outcomes/"
+  gamefiles <- "~/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
+  gamedates <- "~/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
+}
+
 
 library(knitr)
 library(readxl)
