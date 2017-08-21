@@ -6,6 +6,7 @@ if (Sys.info()["user"] == "Brian") {
   output <- "C:/Users/Brian/Dropbox/Sim/MJL_code/Outcomes/"
   gamefiles <- "C:/Users/Brian/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
   gamedates <- "C:/Users/Brian/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
+  ModelLocation <- "C:/Users/Brian/Dropbox/Sim/MJL_code/12-16-2016/Model/"
 }
 
 if (Sys.info()["user"] == "mlopez1") {
@@ -14,6 +15,7 @@ if (Sys.info()["user"] == "mlopez1") {
   output <- "~/Dropbox/Sim/MJL_code/Outcomes/"
   gamefiles <- "~/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
   gamedates <- "~/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
+  ModelLocation <- "~/Dropbox/Sim/MJL_code/12-16-2016/Model/"
 }
 
 
@@ -21,8 +23,9 @@ if (Sys.info()["user"] == "elopez") {
   # For Erin
   constants <- "C:/Users/elopez/Dropbox/Sim/MJL_code/MLconstants/"
   output <- "C:/Users/elopez/Dropbox/Sim/MJL_code/Outcomes/"
-  gamefiles <- "C:/Users/elopez/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
-  gamedates <- "C:/Users/elopez/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
+  gamefiles <- "C:/Users/elopez/Dropbox/Sim/MJL_code/12-16-2016/Model/gamedata/"
+  gamedates <- "C:/Users/elopez/Dropbox/Sim/MJL_code/12-16-2016/Model/constants/"
+  ModelLocation <- "C:/elopez/Dropbox/Sim/MJL_code/12-16-2016/Model/"
 }
 
 if (Sys.info()["user"] == "jenkins") {
@@ -31,6 +34,7 @@ if (Sys.info()["user"] == "jenkins") {
   output <- "~/Dropbox/Sim/MJL_code/Outcomes/"
   gamefiles <- "~/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
   gamedates <- "~/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
+  ModelLocation <- "~/Dropbox/Sim/MJL_code/12-16-2016/Model/"
 }
 
 
