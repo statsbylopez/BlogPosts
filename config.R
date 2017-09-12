@@ -38,6 +38,17 @@ if (Sys.info()["user"] == "jenkins") {
 }
 
 
+if (Sys.info()["user"] == "doherbr") {
+  # For Brian-JHK
+  constants <- "C:/Users/doherbr/Dropbox/Sim/MJL_code/MLconstants/"
+  output <- "C:/Users/doherbr/Dropbox/Sim/MJL_code/Outcomes/"
+  gamefiles <- "C:/Users/doherbr/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
+  gamedates <- "C:/Users/doherbr/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
+  ModelLocation <- "C:/Users/doherbr/Dropbox/Sim/MJL_code/12-16-2016/Model/"
+  mljcode <- "C:/Users/doherbr/Dropbox/Sim/MJL_code/"
+}
+
+
 library(knitr)
 library(readxl)
 library(readr)
