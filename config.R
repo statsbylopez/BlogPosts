@@ -1,6 +1,6 @@
 # local configuration hack
 
-if (http://Sys.info ()["user"] == "doherbr") {
+if (Sys.info ()["user"] == "doherbr") {
   # For Brian-JHK
   constants <- "C:/Users/doherbr/Desktop/Dropbox/Sim/MJL_code/MLconstants/"
   output <- "C:/Users/doherbr/Desktop/Dropbox/Sim/MJL_code/Outcomes/"
@@ -10,7 +10,7 @@ if (http://Sys.info ()["user"] == "doherbr") {
   mljcode <- "C:/Users/doherbr/Desktop/Dropbox/Sim/MJL_code/"
 }
 
-if (http://Sys.info ()["user"] == "Brian") {
+if (Sys.info ()["user"] == "Brian") {
   # For Brian
   constants <- "C:/Users/Brian/Desktop/Dropbox/Sim/MJL_code/MLconstants/"
   output <- "C:/Users/Brian/Desktop/Dropbox/Sim/MJL_code/Outcomes/"
