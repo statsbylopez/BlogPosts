@@ -1,14 +1,23 @@
 # local configuration hack
 
-if (Sys.info()["user"] == "Brian") {
-  # For Brian
-  constants <- "C:/Users/Brian/Dropbox/Sim/MJL_code/MLconstants/"
-  output <- "C:/Users/Brian/Dropbox/Sim/MJL_code/Outcomes/"
-  gamefiles <- "C:/Users/Brian/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
-  gamedates <- "C:/Users/Brian/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
-  ModelLocation <- "C:/Users/Brian/Dropbox/Sim/MJL_code/12-16-2016/Model/"
+if (http://Sys.info ()["user"] == "doherbr") {
+  # For Brian-JHK
+  constants <- "C:/Users/doherbr/Desktop/Dropbox/Sim/MJL_code/MLconstants/"
+  output <- "C:/Users/doherbr/Desktop/Dropbox/Sim/MJL_code/Outcomes/"
+  gamefiles <- "C:/Users/doherbr/Desktop/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
+  gamedates <- "C:/Users/doherbr/Desktop/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
+  ModelLocation <- "C:/Users/doherbr/Desktop/Dropbox/Sim/MJL_code/12-16-2016/Model/"
+  mljcode <- "C:/Users/doherbr/Desktop/Dropbox/Sim/MJL_code/"
 }
 
+if (http://Sys.info ()["user"] == "Brian") {
+  # For Brian
+  constants <- "C:/Users/Brian/Desktop/Dropbox/Sim/MJL_code/MLconstants/"
+  output <- "C:/Users/Brian/Desktop/Dropbox/Sim/MJL_code/Outcomes/"
+  gamefiles <- "C:/Users/Brian/Desktop/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
+  gamedates <- "C:/Users/Brian/Desktop/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
+  ModelLocation <- "C:/Users/Brian/Desktop/Dropbox/Sim/MJL_code/12-16-2016/Model/"
+}
 if (Sys.info()["user"] == "mlopez1") {
   # For Mike
   constants <- "~/Dropbox/Sim/MJL_code/MLconstants/"
@@ -35,17 +44,6 @@ if (Sys.info()["user"] == "jenkins") {
   gamefiles <- "~/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
   gamedates <- "~/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
   ModelLocation <- "~/Dropbox/Sim/MJL_code/12-16-2016/Model/"
-}
-
-
-if (Sys.info()["user"] == "doherbr") {
-  # For Brian-JHK
-  constants <- "C:/Users/doherbr/Dropbox/Sim/MJL_code/MLconstants/"
-  output <- "C:/Users/doherbr/Dropbox/Sim/MJL_code/Outcomes/"
-  gamefiles <- "C:/Users/doherbr/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
-  gamedates <- "C:/Users/doherbr/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
-  ModelLocation <- "C:/Users/doherbr/Dropbox/Sim/MJL_code/12-16-2016/Model/"
-  mljcode <- "C:/Users/doherbr/Dropbox/Sim/MJL_code/"
 }
 
 
