@@ -1,13 +1,13 @@
 # local configuration hack
 
-if (Sys.info()["user"] == "Brian") {
+if (Sys.info ()["user"] == "Brian") {
   # For Brian
-  constants <- "C:/Users/Brian/Dropbox/Constants/"
-  output <- "C:/Users/Brian/Dropbox/Sim/2018 Outcomes/"
-  gamefiles <- "C:/Users/Brian/Dropbox/sim/Model/gamedata/"
-  gamedates <- "C:/Users/Brian/Dropbox/sim/Model/constants/"
-  ModelLocation <- "C:/Users/Brian/Dropbox/Sim/Model/"
-  mljcode <- "C:/Users/Brian/Dropbox/Sim/"
+  constants <- "C:/Users/Brian/desktop/Dropbox/Constants/"
+  output <- "C:/Users/Brian/desktop/Dropbox/Sim/2018 Outcomes/"
+  gamefiles <- "C:/Users/Brian/desktop/Dropbox/sim/Model/gamedata/"
+  gamedates <- "C:/Users/Brian/desktop/Dropbox/sim/Model/constants/"
+  ModelLocation <- "C:/Users/Brian/desktop/Dropbox/Sim/Model/"
+  mljcode <- "C:/Users/Brian/desktop/Dropbox/Sim/"
 }
 
 if (Sys.info()["user"] == "mlopez1") {
@@ -42,15 +42,14 @@ if (Sys.info()["user"] == "jenkins") {
 }
 
 if (Sys.info()["user"] == "doherbr") {
-  # For Brian-JHK
-  constants <- "C:/Users/doherbr/Dropbox/Constants/"
-  output <- "C:/Users/doherbr/Dropbox/Sim/2018 Outcomes/"
-  gamefiles <- "C:/Users/doherbr/Dropbox/sim/Model/gamedata/"
-  gamedates <- "C:/Users/doherbr/Dropbox/sim/Model/constants/"
-  ModelLocation <- "C:/Users/doherbr/Dropbox/Sim/Model/"
-  mljcode <- "C:/Users/doherbr/Dropbox/Sim/"
+  # For doherbr
+  constants <- "C:/Users/doherbr/desktop/Dropbox/Constants/"
+  output <- "C:/Users/doherbr/desktop/Dropbox/Sim/2018 Outcomes/"
+  gamefiles <- "C:/Users/doherbr/desktop/Dropbox/sim/Model/gamedata/"
+  gamedates <- "C:/Users/doherbr/desktop/Dropbox/sim/Model/constants/"
+  ModelLocation <- "C:/Users/doherbr/desktop/Dropbox/Sim/Model/"
+  mljcode <- "C:/Users/doherbr/desktop/Dropbox/Sim/"
 }
-
 
 library(knitr)
 library(readxl)
