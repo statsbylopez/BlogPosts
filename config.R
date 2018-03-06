@@ -2,7 +2,7 @@
 
 if (Sys.info ()["user"] == "Brian") {
   # For Brian
-  constants <- "C:/Users/Brian/desktop/Dropbox/Constants/"
+  constants <- "C:/Users/Brian/desktop/Dropbox/Sim/Constants/"
   output <- "C:/Users/Brian/desktop/Dropbox/Sim/2018 Outcomes/"
   gamefiles <- "C:/Users/Brian/desktop/Dropbox/sim/Model/gamedata/"
   gamedates <- "C:/Users/Brian/desktop/Dropbox/sim/Model/constants/"
@@ -43,7 +43,7 @@ if (Sys.info()["user"] == "jenkins") {
 
 if (Sys.info()["user"] == "doherbr") {
   # For doherbr
-  constants <- "C:/Users/doherbr/desktop/Dropbox/Constants/"
+  constants <- "C:/Users/doherbr/desktop/Dropbox/Sim/Constants/"
   output <- "C:/Users/doherbr/desktop/Dropbox/Sim/2018 Outcomes/"
   gamefiles <- "C:/Users/doherbr/desktop/Dropbox/sim/Model/gamedata/"
   gamedates <- "C:/Users/doherbr/desktop/Dropbox/sim/Model/constants/"
