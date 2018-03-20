@@ -227,7 +227,13 @@ p + geom_point() + geom_smooth(method = "loess") + facet_grid(~Sport + Rnd)+them
 ### Identify the lottery odds that would allow the NBA to match the NFLs curve
 ########################
 
-nba.fit <- loess(Outcome ~ Pk, data = filter(all.sports, Pk <= 60, Sport == "NBA"), span = 0.1)
+all.sports1 <- all.sports %>% filter(Pk >= 55, Pk <= 60) %>% group_by(Sport) %>% summarise(baseline = mean(Outcome))
+all.sports <- all.sports %>% left_join(all.sports1) %>%
+  mutate(Outcome.rel = Outcome/baseline)
+  
+  
+span <- 0.3
+nba.fit <- loess(Outcome.rel ~ Pk, data = filter(all.sports, Pk <= 60, Sport == "NBA"), span = span)
 nba.predict <- data.frame(Pk = 1:60)
 nba.predict$val.hat <- predict(nba.fit, nba.predict$Pk)
 nba.predict$SE <- predict(nba.fit, nba.predict$Pk, se = TRUE)$se.fit
@@ -253,8 +259,35 @@ se.exp.val <- matrix(nba.predict$SE[1:14])
 nba.predict$val.hat.adj <- ifelse(nba.predict$Pk < 15, nba.probs %*% exp.val, nba.predict$val.hat)
 
 
+nfl.fit <- loess(Outcome.rel ~ Pk, data = filter(all.sports, Pk <= 60, Sport == "NFL"), span = span)
+nba.predict$val.hat.nfl <- predict(nfl.fit, nba.predict$Pk)
 
-p <- ggplot(filter(all.sports, Sport == "NBA"), aes(Pk, Outcome))
-p + geom_point() + geom_smooth(method = "loess", span = .1)
+
+
+p <- ggplot(filter(all.sports, Sport == "NFL", year > 1990), aes(Pk, Outcome.rel))
+p +   geom_point() + 
+  geom_smooth(method = "loess", span = span) + xlim(0, 60) + 
 scale_y_continuous("Efficiency") 
+
+p <- ggplot(nba.predict, aes(Pk, val.hat)) + 
+  geom_line() + 
+  geom_point()+ 
+  geom_line(data = nba.predict, aes(Pk, val.hat.adj), colour = "red", lty = 2) + 
+  geom_point(data = nba.predict, aes(Pk, val.hat.adj), colour = "red") + 
+  #geom_line(data = nba.predict, aes(Pk, val.hat.nfl), colour = "blue", lty = 2) + 
+  #geom_point(data = nba.predict, aes(Pk, val.hat.nfl), colour = "blue") + 
+  xlim(0, 22) + 
+  annotate("text", x = 1.5, y = 14, label = "Lottery Adjusted", colour = "red") + 
+  annotate("text", x = 1.5, y = 20.5, label = "Original", colour = "black") + 
+  xlab ("Finishing record") + ylab("Value") + labs(title = "Finishing spot value, original versus lottery adjusted")
+p
+
+
+
+b <- nba.predict$val.hat.nfl[1:14]
+A <- diag(nrow = 14, ncol = 14, nba.predict$val.hat[1:14])
+solve(A, b)
+
+
+
 
