@@ -227,7 +227,7 @@ AIC(m1)
 
 pre <- expand.grid(pendiff.home = seq(-3, 3, 1), p_home = seq(.35, .7, .01))
 pre$predict <- predict.gam(m1, pre)
-
+ 
 p <- ggplot(pre, aes(x=p_home, y=pendiff.home)) + 
   geom_tile(aes(fill = predict)) + 
   scale_fill_gradient2("Period 2/3 penalty differential", low = "#af8dc3", mid = "white", high = "#7fbf7b")+
