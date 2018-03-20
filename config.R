@@ -1,21 +1,55 @@
 # local configuration hack
 
-if (Sys.info()["user"] == "Brian") {
+if (Sys.info ()["user"] == "Brian") {
   # For Brian
-  constants <- "C:/Users/Brian/Dropbox/Sim/MJL_code/MLconstants/"
-  output <- "C:/Users/Brian/Dropbox/Sim/MJL_code/Outcomes/"
-  gamefiles <- "C:/Users/Brian/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
-  gamedates <- "C:/Users/Brian/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
+  constants <- "C:/Users/Brian/desktop/Dropbox/Sim/Constants/"
+  output <- "C:/Users/Brian/desktop/Dropbox/Sim/2018 Outcomes/"
+  gamefiles <- "C:/Users/Brian/desktop/Dropbox/sim/Model/gamedata/"
+  gamedates <- "C:/Users/Brian/desktop/Dropbox/sim/Model/constants/"
+  ModelLocation <- "C:/Users/Brian/desktop/Dropbox/Sim/Model/"
+  mljcode <- "C:/Users/Brian/desktop/Dropbox/Sim/"
 }
 
 if (Sys.info()["user"] == "mlopez1") {
   # For Mike
-  constants <- "~/Dropbox/Sim/MJL_code/MLconstants/"
-  output <- "~/Dropbox/Sim/MJL_code/Outcomes/"
-  gamefiles <- "~/Dropbox/sim/MJL_code/12-16-2016/Model/gamedata/"
-  gamedates <- "~/Dropbox/sim/MJL_code/12-16-2016/Model/constants/"
+  constants <- "~/Dropbox/Sim/Constants/"
+  output <- "~/Dropbox/Sim/2018 Outcomes/"
+  gamefiles <- "~/Dropbox/sim/Model/gamedata/"
+  gamedates <- "~/Dropbox/sim/Model/constants/"
+  ModelLocation <- "~/Dropbox/Sim/Model/"
+  mljcode <- "~/Dropbox/Sim/"
 }
 
+
+if (Sys.info()["user"] == "elopez") {
+  # For Erin
+  constants <- "C:/Users/elopez/Constants/"
+  output <- "C:/Users/elopez/Dropbox/2018 Outcomes/"
+  gamefiles <- "C:/Users/elopez/Dropbox/Sim/Model/gamedata/"
+  gamedates <- "C:/Users/elopez/Dropbox/Sim/Model/constants/"
+  ModelLocation <- "C:/elopez/Dropbox/Sim/Model/"
+  mljcode <- "C:/elopez/Dropbox/Sim/"
+}
+
+if (Sys.info()["user"] == "jenkins") {
+  # For Apple Sim Box
+  constants <- "~/Dropbox/Sim/Constants/"
+  output <- "~/Dropbox/Sim/2018 Outcomes/"
+  gamefiles <- "~/Dropbox/sim/Model/gamedata/"
+  gamedates <- "~/Dropbox/sim/Model/constants/"
+  ModelLocation <- "~/Dropbox/Sim/Model/"
+  mljcode <- "~/Dropbox/Sim/"
+}
+
+if (Sys.info()["user"] == "doherbr") {
+  # For doherbr
+  constants <- "C:/Users/doherbr/desktop/Dropbox/Sim/Constants/"
+  output <- "C:/Users/doherbr/desktop/Dropbox/Sim/2018 Outcomes/"
+  gamefiles <- "C:/Users/doherbr/desktop/Dropbox/sim/Model/gamedata/"
+  gamedates <- "C:/Users/doherbr/desktop/Dropbox/sim/Model/constants/"
+  ModelLocation <- "C:/Users/doherbr/desktop/Dropbox/Sim/Model/"
+  mljcode <- "C:/Users/doherbr/desktop/Dropbox/Sim/"
+}
 
 library(knitr)
 library(readxl)
