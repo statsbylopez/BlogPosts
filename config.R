@@ -2,12 +2,12 @@
 
 if (Sys.info ()["user"] == "Brian") {
   # For Brian
-  constants <- "C:/Users/Brian/desktop/Dropbox/Sim/Constants/"
-  output <- "C:/Users/Brian/desktop/Dropbox/Sim/2018 Outcomes/"
-  gamefiles <- "C:/Users/Brian/desktop/Dropbox/sim/Model/gamedata/"
-  gamedates <- "C:/Users/Brian/desktop/Dropbox/sim/Model/constants/"
-  ModelLocation <- "C:/Users/Brian/desktop/Dropbox/Sim/Model/"
-  mljcode <- "C:/Users/Brian/desktop/Dropbox/Sim/"
+  constants <- "C:/Users/Brian/Dropbox/Sim/Constants/"
+  output <- "C:/Users/Brian/Dropbox/Sim/2018 Outcomes/"
+  gamefiles <- "C:/Users/Brian/Dropbox/sim/Model/gamedata/"
+  gamedates <- "C:/Users/Brian/Dropbox/sim/Model/constants/"
+  ModelLocation <- "C:/Users/Brian/Dropbox/Sim/Model/"
+  mljcode <- "C:/Users/Brian/Dropbox/Sim/"
 }
 
 if (Sys.info()["user"] == "mlopez1") {
