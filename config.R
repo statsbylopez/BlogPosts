@@ -51,6 +51,19 @@ if (Sys.info()["user"] == "doherbr") {
   mljcode <- "C:/Users/doherbr/desktop/Dropbox/Sim/"
 }
 
+
+
+if (Sys.info()["user"] == "btdoh"){
+  # For brian laptop
+  constants <- "C:/Users/btdoh/Dropbox/Sim/Constants/"
+  output <- "C:/Users/btdoh/Dropbox/Sim/2018 Outcomes/"
+  gamefiles <- "C:/Users/btdoh/Dropbox/sim/Model/gamedata/"
+  gamedates <- "C:/Users/btdoh/Dropbox/sim/Model/constants/"
+  ModelLocation <- "C:/Users/Dropbox/Sim/Model/"
+  mljcode <- "C:/Users/btdoh/Dropbox/Sim/"
+}
+
+
 library(knitr)
 library(readxl)
 library(readr)
