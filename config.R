@@ -50,8 +50,7 @@ if (Sys.info()["user"] == "doherbr") {
   ModelLocation <- "C:/Users/doherbr/desktop/Dropbox/Sim/Model/"
   mljcode <- "C:/Users/doherbr/desktop/Dropbox/Sim/"
 }
-
-if (http://Sys.info ()["user"] == "btdoh") {
+if (Sys.info()["user"] == "btdoh"){
   # For brian laptop
   constants <- "C:/Users/btdoh/Dropbox/Sim/Constants/"
   output <- "C:/Users/btdoh/Dropbox/Sim/2018 Outcomes/"
