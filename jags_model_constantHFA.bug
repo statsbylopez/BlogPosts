@@ -1,0 +1,23 @@
+model { 
+for (i in 1:n) {
+  y[i] ~ dnorm(mu[i], tauGame)
+  mu[i] <- alpha + inprod(theta[w[i],],x[i,])
+}
+
+for (j in 1:nTeams){
+  theta[1,j] ~ dnorm(0, tauSeason)
+}
+
+for (www in 2:nWeeks) {  
+  for (j in 1:nTeams) {
+    theta[www,j] ~ dnorm(gammaWeek*theta[www-1,j], tauWeek)
+  }
+}
+
+alpha ~ dnorm(0,0.0001)
+tauGame ~ dunif(0,1000)
+tauWeek ~ dunif(0,1000)
+tauSeason ~ dunif(0,1000)
+gammaWeek ~ dunif(0,1.5)
+
+}
