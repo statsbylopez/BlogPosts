@@ -2,12 +2,15 @@ library(XML)
 library(rvest)
 library(dplyr)
 library(ggplot2)
-
+library(ggrepel)
+library(forcats)
 
 year <- 1990:2017
 
+########### ########### ########### ########### 
+########### Scrape the data via PFR
+########### ########### ########### ########### 
 
-## NFL
 nfl.all <- NULL
 for (i in year){
   url <- paste0("http://www.pro-football-reference.com/years/", i, "/draft.htm")
@@ -23,8 +26,13 @@ for (i in year){
   nfl.all <- rbind(nfl.all, nfl)
   print(i)
 }
-  
-nfl.all1 <- nfl.all
+
+
+########### ########### ########### ########### 
+########### Data cleaning
+########### ########### ########### ########### 
+
+nfl.all1 <- nfl.all 
 nfl.all1 <- filter(nfl.all1, Pos!="Pos", Tm!="")
 nfl.all1[nfl.all1$CarAV=="",]$CarAV <- 0
 nfl.all1 <- nfl.all1 %>%
@@ -35,9 +43,12 @@ nfl.all1 <- nfl.all1 %>%
   group_by(year) %>%
   mutate(pick.number = 1:n())
 
+### Project players who have been drafted recently, using a rough estimate of 4200 career AV per draft class
 year.rates <- nfl.all1 %>% group_by(year) %>% summarise(total.av = sum(CarAV)) %>% mutate(ratio.year = ifelse(year > 2008, 4200/total.av, 1))
 nfl.all1 <- nfl.all1 %>% left_join(year.rates) %>% mutate(CarAV.projected = CarAV*ratio.year)
 
+
+## Pesky team name changes
 Teams <- sort(unique(nfl.all1$Tm))
 Teams[Teams == "SDG"] <- "LAC"
 Teams[Teams == "RAM"] <- "LAR"
@@ -62,17 +73,21 @@ nfl.all1 <- nfl.all1 %>% left_join(division)
 
 
 
+########### ########### ########### ########### 
+########### Plots
+########### ########### ########### ########### 
+
+## Division level
 ggplot(filter(nfl.all1, year > 1999, Rnd <=7, Division == "AFC North"), aes(pick.number, CarAV.projected)) + 
   geom_jitter(alpha = 0.05) + geom_smooth(method = "loess", span = 0.5, colour = "black", se= FALSE)  + 
   geom_smooth(method = "loess", span = 0.5, se = FALSE, aes(colour = Tm))  + 
-  labs(title = "AFC North draft picks since 2000 versus the league average", subtitle = "Using Career Approximate Value via PFR (or projections for recent draftees)") + 
+  labs(title = "AFC North draft picks since 2000 versus the league average", 
+       subtitle = "Using Career Approximate Value via PFR (or projections for recent draftees)") + 
   scale_x_continuous("Pick number") + scale_y_continuous("Career approximate value")+
   theme_bw(15)
 
-
-
-
-library(ggrepel)
+## Team level (pick your favorite team here)
+unique(nfl.all1$Tm)
 nfl.all1 <- nfl.all1 %>% mutate(pats = (Tm == "NWE")) %>% ungroup()
 p1 <- ggplot(filter(nfl.all1, year > 1999, Rnd <=7, !pats), aes(pick.number, CarAV.projected)) + 
    geom_jitter(alpha = 0.05) + geom_smooth(method = "loess", span = 0.5, colour = "black", se= FALSE)  + 
@@ -91,6 +106,7 @@ p1 <- ggplot(filter(nfl.all1, year > 1999, Rnd <=7, !pats), aes(pick.number, Car
 p1
 
 
+## Compare observed versus expectation
 fit.draft <- loess(CarAV.projected ~ pick.number, data = filter(nfl.all1, year > 1999, Rnd <=7))
 nfl.all1$yhat <- predict(fit.draft, nfl.all1)
 
@@ -127,10 +143,8 @@ draft.sum %>% ggplot(aes(exp, obs)) + geom_point(alpha = 0.05) +
   geom_abline(aes(intercept = 0, slope = 1), lty = 2) + 
   theme_bw(14)
 
-filter(nfl.all1,  Tm == "NWE", year == 2017)
 
 draft.sum %>% group_by(Tm, year) %>% summarise(total.exp = sum(exp), n.picks = n()) %>% arrange(total.exp) %>% print.data.frame()
-library(forcats)
 draft.sum %>% group_by(Tm) %>% summarise(total.diff = sum(obs) - sum(exp), n.picks = n()) %>% arrange(total.diff) %>% 
   ggplot(aes(x = fct_reorder(Tm, total.diff), total.diff)) + geom_bar(stat = "identity") + 
   labs(title = "Observed NFL draft value versus expectation, by team", subtitle = "Comparing PFR's career approximate vaue")  + 
@@ -138,4 +152,3 @@ draft.sum %>% group_by(Tm) %>% summarise(total.diff = sum(obs) - sum(exp), n.pic
   theme_bw(14) + 
 theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 
-\
