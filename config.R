@@ -53,13 +53,13 @@ if (Sys.info()["user"] == "doherbr") {
 
 
 
-if (Sys.info()["user"] == "btdoh"){
+if (Sys.info ()["user"] == "btdoh"){
   # For brian laptop
   constants <- "C:/Users/btdoh/Dropbox/Sim/Constants/"
   output <- "C:/Users/btdoh/Dropbox/Sim/2018 Outcomes/"
   gamefiles <- "C:/Users/btdoh/Dropbox/sim/Model/gamedata/"
   gamedates <- "C:/Users/btdoh/Dropbox/sim/Model/constants/"
-  ModelLocation <- "C:/Users/Dropbox/Sim/Model/"
+  ModelLocation <- "C:/Users/btdoh/Dropbox/Sim/Model/"
   mljcode <- "C:/Users/btdoh/Dropbox/Sim/"
 }
 
