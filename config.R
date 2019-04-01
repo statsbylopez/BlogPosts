@@ -31,14 +31,14 @@ if (Sys.info()["user"] == "elopez") {
   mljcode <- "C:/elopez/Dropbox/Sim/"
 }
 
-if (Sys.info()["user"] == "jenkins") {
+if (Sys.info ()["user"] == "jenkins") {
   # For Apple Sim Box
-  constants <- "~/Dropbox/Sim/Constants/"
-  output <- "~/Dropbox/Sim/2018 Outcomes/"
-  gamefiles <- "~/Dropbox/sim/Model/gamedata/"
-  gamedates <- "~/Dropbox/sim/Model/constants/"
-  ModelLocation <- "~/Dropbox/Sim/Model/"
-  mljcode <- "~/Dropbox/Sim/"
+  constants <- "/Volumes/Mac_HD/Dropbox/Sim/Constants/"
+  output <- "/Volumes/Mac_HD/Dropbox/Sim/Model/2018 Outcomes/"
+  gamefiles <- "/Volumes/Mac_HD/Dropbox/Sim/Model/gamedata/"
+  gamedates <- "/Volumes/Mac_HD/Dropbox/Sim/Model/constants/"
+  ModelLocation <- "/Volumes/Mac_HD/Dropbox/Sim/Model"
+  mljcode <- "/Volumes/Mac_HD/Dropbox/Sim"
 }
 
 if (Sys.info()["user"] == "doherbr") {
