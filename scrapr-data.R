@@ -9,3 +9,10 @@ scrapr.fun <- function(year){
                                            touchdown, pass_touchdown, rush_touchdown, penalty, penalty_yards, posteam, fumble_recovery_1_team) 
   return(df.scrapr.1)
 }
+
+
+df.scrapr <- lapply(2009:2018, scrapr.fun)
+
+scrapr.plays <- bind_rows(df.scrapr)
+
+write_csv(scrapr.plays, "scrapr_plays.csv")
