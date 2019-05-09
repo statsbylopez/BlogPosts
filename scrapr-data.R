@@ -9,4 +9,3 @@ scrapr.fun <- function(year){
                                            touchdown, pass_touchdown, rush_touchdown, penalty, penalty_yards, posteam, fumble_recovery_1_team) 
   return(df.scrapr.1)
 }
-
