@@ -10,8 +10,3 @@ scrapr.fun <- function(year){
   return(df.scrapr.1)
 }
 
-
-
-df.scrapr <- lapply(2009:2018, scrapr.fun)
-
-scrapr.plays <- bind_rows(df.scrapr)
