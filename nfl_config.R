@@ -5,7 +5,7 @@ if (Sys.info ()["user"] == "Michael.Lopez") {
  base <- "C:/Users/Michael.Lopez/OneDrive - National Football League/Football Ops Analysis/"
 }
 
-if (Sys.info ()["user"] == "jack.persampire") {
+if (Sys.info ()["user"] == "Jack.Persampire") {
  ## for Jack
  base <- "C:/Users/jack.persampire/National Football League/Lopez, Michael - Football Ops Analysis/"
 }
