@@ -7,7 +7,7 @@ if (Sys.info ()["user"] == "Michael.Lopez") {
 
 if (Sys.info ()["user"] == "Jack.Persampire") {
  ## for Jack
- base <- "C:/Users/Jack.Persampire/National Football League/Lopez, Michael - Football Ops Analysis/"
+ base <- "C:/Users/jack.persampire/National Football League/Lopez, Michael - Football Ops Analysis/"
 }
 
 if (Sys.info ()["user"] == "sean.mckee") {
