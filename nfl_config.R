@@ -1,6 +1,6 @@
 # local configuration hack
 
-if (Sys.info ()["user"] == "michael.lopez") {
+if (Sys.info ()["user"] == "michael.lopez"|Sys.info ()["user"] == "Michael.Lopez") {
  ## for Mike
  base <- "C:/Users/Michael.Lopez/OneDrive - National Football League/Football Ops Analysis/"
 }
