@@ -64,6 +64,18 @@ if (Sys.info ()["user"] == "btdoh"){
 }
 
 
+
+
+if (http://Sys.info ()["user"] == "brian") {
+  # For Brian
+  constants <- "/home/brian/Dropbox/Sim/Constants/"
+  output <- "/home/brian/Dropbox/Sim/2018 Outcomes/"
+  gamefiles <- "/home/brian/Dropbox/sim/Model/gamedata/"
+  gamedates <- "/home/brian/Dropbox/sim/Model/constants/"
+  ModelLocation <- "/home/brian/Dropbox/Sim/Model/"
+  mljcode <- "/home/brian/Dropbox/Sim/"
+}
+
 library(knitr)
 library(readxl)
 library(readr)
