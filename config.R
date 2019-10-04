@@ -66,7 +66,7 @@ if (Sys.info ()["user"] == "btdoh"){
 
 
 
-if (http://Sys.info ()["user"] == "brian") {
+if (Sys.info ()["user"] == "brian") {
   # For Brian
   constants <- "/home/brian/Dropbox/Sim/Constants/"
   output <- "/home/brian/Dropbox/Sim/2018 Outcomes/"
