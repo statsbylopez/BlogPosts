@@ -63,18 +63,26 @@ if (Sys.info ()["user"] == "btdoh"){
   mljcode <- "C:/Users/btdoh/Dropbox/Sim/"
 }
 
-
-
-
-if (Sys.info ()["user"] == "brian") {
-  # For Brian
-  constants <- "/home/brian/Dropbox/Sim/Constants/"
-  output <- "/home/brian/Dropbox/Sim/2018 Outcomes/"
-  gamefiles <- "/home/brian/Dropbox/sim/Model/gamedata/"
-  gamedates <- "/home/brian/Dropbox/sim/Model/constants/"
-  ModelLocation <- "/home/brian/Dropbox/Sim/Model/"
-  mljcode <- "/home/brian/Dropbox/Sim/"
+if (Sys.info ()["user"] == "brian" & Sys.info()['sysname'] =="Windows") {
+  # For Brian laptop
+  constants <- "C:/Users/brian/Dropbox/Sim/Constants/"
+  output <- "C:/Users/brian/Dropbox/Sim/2018 Outcomes/"
+  gamefiles <- "C:/Users/brian/Dropbox/sim/Model/gamedata/"
+  gamedates <- "C:/Users/brian/Dropbox/sim/Model/constants/"
+  ModelLocation <- "C:/Users/brian/Dropbox/Sim/Model/"
+  mljcode <- "C:/Users/brian/Dropbox/Sim/"
 }
+
+
+#if (Sys.info ()["user"] == "brian") {
+#  # For Brian
+#  constants <- "/home/brian/Dropbox/Sim/Constants/"
+#  output <- "/home/brian/Dropbox/Sim/2018 Outcomes/"
+#  gamefiles <- "/home/brian/Dropbox/sim/Model/gamedata/"
+#  gamedates <- "/home/brian/Dropbox/sim/Model/constants/"
+#  ModelLocation <- "/home/brian/Dropbox/Sim/Model/"
+#  mljcode <- "/home/brian/Dropbox/Sim/"
+#}
 
 library(knitr)
 library(readxl)
