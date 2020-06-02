@@ -1,6 +1,5 @@
 # local configuration hack
 
-
 if (Sys.info ()["user"] %in% c("thompson.bliss","Thompson.Bliss")) {
  ## for Tom
  base <- "C:/Users/Thompson.Bliss/National Football League/Lopez, Michael - Football Ops Analysis/"
